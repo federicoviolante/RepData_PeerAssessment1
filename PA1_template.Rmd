@@ -1,20 +1,74 @@
-# Reproducible Research: Peer Assessment 1
-
 
 ## Loading and preprocessing the data
 
-
+load data 
+```{r}
+rawdata <- read.csv("activity.csv")
+```
+preprocessing (removing NA for first analysis)...  
+```{r}
+cleaned <- rawdata[complete.cases(rawdata),]
+stepsPerDay <- sapply(split(cleaned$steps, cleaned$date),sum)
+```
 
 ## What is mean total number of steps taken per day?
 
+Make a histogram of the total number of steps taken each day  
+```{r}
+hist(stepsPerDay, col="red", main="Steps per day",ylim=c(0,40))
+```
 
+Calculate and report the mean and median total number of steps taken per day:  
+this is the mean  
+```{r}
+print(mean(stepsPerDay))
+```
+this is the median  
+```{r}
+print(median(stepsPerDay))
+```
 
 ## What is the average daily activity pattern?
 
-
-
+```{r}
+stepsPerInt <-sapply(split(cleaned$steps, cleaned$interval), mean)
+plot(stepsPerInt, type = "l", , xlab = "Interval", ylab = "Number of steps")
+```
+Max in daily number of steps  
+```{r}
+  names(stepsPerInt[stepsPerInt==max(stepsPerInt)])
+```
 ## Imputing missing values
 
-
+the number of missing values in the initial dataset  
+```{r}
+sum(is.na(rawdata$steps))
+```
+fill the data for missing values with the average of each interval...  
+```{r}
+filled=rawdata
+for (i in 1:nrow(filled)) {
+    if (is.na(filled[i, "steps"])) {
+        interval = as.character(filled[i, "interval"])
+        filled[i, "steps"] = stepsPerInt[interval]
+    }
+}
+```
+Make a histogram of the total number of steps taken each day  
+```{r}
+stepsPerDayF <- sapply(split(cleaned$steps, cleaned$date),sum)
+hist(stepsPerDayF, col="blue", main="Steps per Day \n (with NA replaced by calculated data)",ylim=c(0,40))
+```
+Calculate and report the mean and median total number of steps taken per day:  
+this is the mean  
+```{r}
+print(mean(stepsPerDayF))
+```
+this is the median  
+```{r}
+print(median(stepsPerDayF))
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r}
+```
